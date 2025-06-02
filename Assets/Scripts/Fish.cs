@@ -1,82 +1,93 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Fish : MonoBehaviour
 {
-	[SerializeField]
-	float speed = 0.3f;
+	// 魚の移動速度
+	[SerializeField] float speed = 1f;
 
-	[SerializeField]
-	float rotationSpeed = 0.01f;
+	// 回転時に加えるトルクの強さ
+	[SerializeField] float rotationSpeed = 0.1f;
 
-	[SerializeField]
-	float rotation_Interval = 3f;
+	// 回転の間隔（秒）
+	[SerializeField] float rotationInterval = 3f;
 
-	Rigidbody iwasirigid;
+	// Rigidbody コンポーネントへの参照
+	Rigidbody rb;
 
 	void Start()
 	{
-		iwasirigid = GetComponent<Rigidbody>();
+		// Rigidbody を取得
+		rb = GetComponent<Rigidbody>();
+
+		// 回転処理のコルーチンを開始
 		StartCoroutine(RotateFishRoutine());
 	}
 
+	// 一定間隔でランダムな方向に回転するコルーチン
 	IEnumerator RotateFishRoutine()
 	{
+		// 回転パターンの配列（複数の方向の組み合わせ）
+		Vector3[][] torquePatterns = new Vector3[][]
+		{
+			new[] { Vector3.down, Vector3.right },
+			new[] { Vector3.up, Vector3.right },
+			new[] { Vector3.down, Vector3.left },
+			new[] { Vector3.up, Vector3.right },
+			new[] { Vector3.up },
+			new[] { Vector3.down }
+		};
+
 		while (true)
 		{
-			yield return new WaitForSeconds(rotation_Interval);
+			// 指定時間待機
+			yield return new WaitForSeconds(rotationInterval);
 
-			int count = Random.Range(0, 6);
-			Debug.Log(count);
+			// ランダムなパターンを選択
+			int index = Random.Range(0, torquePatterns.Length);
 
-			switch (count)
+			// 選ばれた方向にトルクを加える
+			foreach (var dir in torquePatterns[index])
 			{
-				case 0:
-					// 左向き、下向きにトルクをかける
-					iwasirigid.AddTorque(Vector3.down * rotationSpeed, ForceMode.Impulse);
-					iwasirigid.AddTorque(Vector3.right * rotationSpeed, ForceMode.Impulse);
-					break;
-				case 1:
-					// 右向き、下向きにトルクをかける
-					iwasirigid.AddTorque(Vector3.up * rotationSpeed, ForceMode.Impulse);
-					iwasirigid.AddTorque(Vector3.right * rotationSpeed, ForceMode.Impulse);
-					break;
-				case 2:
-					// 左向き、上向きにトルクをかける
-					iwasirigid.AddTorque(Vector3.down * rotationSpeed, ForceMode.Impulse);
-					iwasirigid.AddTorque(Vector3.left * rotationSpeed, ForceMode.Impulse);
-					break;
-				case 3:
-					// 右向き、上向きにトルクをかける
-					iwasirigid.AddTorque(Vector3.up * rotationSpeed, ForceMode.Impulse);
-					iwasirigid.AddTorque(Vector3.right * rotationSpeed, ForceMode.Impulse);
-					break;
-				case 4:
-					// 右向きにトルクをかける
-					iwasirigid.AddTorque(Vector3.up * rotationSpeed, ForceMode.Impulse);
-					break;
-				case 5:
-					// 左向きにトルクをかける
-					iwasirigid.AddTorque(Vector3.down * rotationSpeed, ForceMode.Impulse);
-					break;
+				rb.AddTorque(dir * rotationSpeed, ForceMode.Impulse);
 			}
 		}
 	}
 
 	void Update()
 	{
-		// 前に進む
-		iwasirigid.velocity = transform.forward * speed;
+		// 前方に一定速度で移動
+		rb.velocity = transform.forward * speed;
 
-		// 外積で元に戻す X軸方向
-		Vector3 left = transform.TransformVector(Vector3.left);
-		Vector3 hori_left = new Vector3(left.x, 0, left.z).normalized;
-		iwasirigid.AddTorque(Vector3.Cross(left, hori_left) * 4, ForceMode.Force);
+		// 姿勢を安定させるための補正トルクを加える
+		ApplyCorrectionTorque(Vector3.left);
+		ApplyCorrectionTorque(Vector3.forward);
+	}
 
-		// 外積で元に戻す Z軸方向
-		Vector3 forward = transform.TransformVector(Vector3.forward);
-		Vector3 hori_forward = new Vector3(forward.x, 0, forward.z).normalized;
-		iwasirigid.AddTorque(Vector3.Cross(forward, hori_forward) * 4, ForceMode.Force);
+	// 指定されたローカル方向に対して姿勢補正トルクを加える
+	void ApplyCorrectionTorque(Vector3 localDirection)
+	{
+		// ローカル方向をワールド方向に変換
+		Vector3 worldDir = transform.TransformVector(localDirection);
+
+		// 水平方向の成分を抽出して正規化
+		Vector3 horizontal = new Vector3(worldDir.x, 0, worldDir.z).normalized;
+
+		// 姿勢補正のためのトルクを加える
+		rb.AddTorque(Vector3.Cross(worldDir, horizontal) * 4, ForceMode.Force);
+	}
+
+	// 衝突時の処理
+	void OnCollisionEnter(Collision collision)
+	{
+		// "Box" タグのオブジェクトに衝突した場合
+		if (collision.collider.CompareTag("Box"))
+		{
+			// 上方向にジャンプ
+			rb.AddForce(Vector3.up * 5f, ForceMode.Impulse);
+
+			// 進行方向を反転
+			transform.rotation = Quaternion.LookRotation(-transform.forward);
+		}
 	}
 }
