@@ -1,19 +1,37 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class plyer : MonoBehaviour
 {
-    
-    // Start is called before the first frame update
+    //キャラコン参照
+    public float movespeed = 5f;
+    private Animator animator;
+    private CharacterController controller;
+
     void Start()
     {
-        
+        //コンポーネントの取得
+        controller = GetComponent<CharacterController>();
+        animator =  GetComponent<Animator>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        //入力取得
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vectical");
+
+        //移動ベクトルの制作
+        Vector3 move = new Vector3(h,0,v);
+        controller.Move(move * movespeed *  Time.deltaTime);
+
+        //アニメーションの切り替え
+        bool isMoving = move.magnitude > 0.1f;
+        animator.SetBool("Swimming", isMoving);
+
+        //前向き変更
+        if (isMoving)
+        {
+            transform.forward = move;
+        }
     }
 }
