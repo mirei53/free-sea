@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
 	void Start()
 	{
 		animator = GetComponent<Animator>();
-		animator.applyRootMotion = true; // Root Motion を有効に
+		animator.applyRootMotion = true;
 	}
 
 	void Update()
@@ -33,13 +33,19 @@ public class PlayerController : MonoBehaviour
 		bool isMoving = inputDirection.magnitude > 0.1f;
 		animator.SetBool("Swimming", isMoving);
 		animator.SetBool("Water", !isMoving);
+
+		// プレイヤーの向きを移動方向に合わせる
+		if (isMoving)
+		{
+			Quaternion targetRotation = Quaternion.LookRotation(inputDirection);
+			transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+		}
 	}
 
 	void OnAnimatorMove()
 	{
 		if (inputDirection.magnitude > 0.1f)
 		{
-			// アニメーションの Root Motion をカメラ方向に合わせて移動
 			Vector3 rootMotion = animator.deltaPosition;
 			Vector3 move = inputDirection * rootMotion.magnitude;
 			transform.position += move;

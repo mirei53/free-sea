@@ -1,26 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MovingCamera : MonoBehaviour
 {
 	[SerializeField] private Transform playerBody;
+	[SerializeField] private Vector3 offset = new Vector3(0f, 2f, -4f);
 	[SerializeField] private float mouseSensitivity = 100f;
 
 	private float xRotation = 0f;
 
 	void Start()
 	{
-		// カーソルを表示＆ロックしない（常に見える）
-		Cursor.lockState = CursorLockMode.None;
-		Cursor.visible = true;
+		Cursor.lockState = CursorLockMode.Locked;
+		Cursor.visible = false;
 	}
-
 	void Update()
 	{
 		HandleMouseLook();
 	}
-
+	void LateUpdate()
+	{
+		FollowPlayer();
+	}
 	void HandleMouseLook()
 	{
 		float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
@@ -29,7 +29,12 @@ public class MovingCamera : MonoBehaviour
 		xRotation -= mouseY;
 		xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
+		// 修正箇所：Quaternion.Euler を正しく使用
 		transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
 		playerBody.Rotate(Vector3.up * mouseX);
+	}
+	void FollowPlayer()
+	{
+		transform.position = playerBody.position + playerBody.TransformDirection(offset);
 	}
 }

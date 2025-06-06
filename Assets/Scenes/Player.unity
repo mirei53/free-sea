@@ -748,13 +748,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1035964576}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.19366334, y: -0, z: -0, w: 0.9810681}
-  m_LocalPosition: {x: 0.007454157, y: 2.12, z: -2.62}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalRotation: {x: 0.35360494, y: -0, z: -0, w: 0.9353949}
+  m_LocalPosition: {x: -3.83, y: -21, z: 8.786922}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1579206402}
-  m_LocalEulerAnglesHint: {x: 22.333, y: 0, z: 0}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 41.416, y: 0, z: 0}
 --- !u!114 &1035964580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -812,6 +812,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerBody: {fileID: 1579206402}
+  offset: {x: 0, y: 2, z: -4}
   mouseSensitivity: 100
 --- !u!1 &1090327797
 GameObject:
@@ -997,7 +998,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fa9a77129073694799fbcc07e29b5bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraTransform: {fileID: 1579206402}
+  cameraTransform: {fileID: 1035964579}
 --- !u!1 &1596596912 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3199380780439565148, guid: 5fefc0dfb09c11f4f8e6f283b9e9aa33,
@@ -1126,16 +1127,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8818148501639231403, guid: 83628a2e699576147adabb30587f44d4,
         type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8818148501639231403, guid: 83628a2e699576147adabb30587f44d4,
+        type: 3}
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 1fbffe97e103356458b6878b664216a0, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 1327674205686831306, guid: 83628a2e699576147adabb30587f44d4,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1035964579}
+    m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 2350652681907635850, guid: 83628a2e699576147adabb30587f44d4,
         type: 3}
@@ -1401,3 +1403,4 @@ SceneRoots:
   - {fileID: 1090327798}
   - {fileID: 432536781}
   - {fileID: 1787120853}
+  - {fileID: 1035964579}
