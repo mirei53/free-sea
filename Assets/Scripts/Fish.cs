@@ -13,11 +13,10 @@ public class Fish : MonoBehaviour
 	{
 		// Rigidbody 設定
 		rb = GetComponent<Rigidbody>();
-		rb.useGravity = false;											 // 重力を無効化
-		rb.collisionDetectionMode = CollisionDetectionMode.Continuous;	 // 衝突検出を強化
-		rb.interpolation = RigidbodyInterpolation.Interpolate;			 // 滑らかな動きに補間
+		rb.useGravity = false;                                             // 重力を無効化
+		rb.collisionDetectionMode = CollisionDetectionMode.Continuous;    // 衝突検出を強化
+		rb.interpolation = RigidbodyInterpolation.Interpolate;            // 滑らかな動きに補間
 
-		// CapsuleCollider はエディタで手動設定する前提なので、ここでは追加しない
 		// 回転処理のコルーチンを開始
 		StartCoroutine(RotateFishRoutine());
 	}
@@ -31,6 +30,7 @@ public class Fish : MonoBehaviour
 
 			// Y軸方向にランダムなトルクを加える（水平回転）
 			float randomY = Random.Range(-1f, 1f);
+			//z軸方向にランダムなトルクを追加
 			rb.AddTorque(Vector3.up * randomY * rotationSpeed, ForceMode.Impulse);
 		}
 	}
@@ -48,11 +48,9 @@ public class Fish : MonoBehaviour
 		// 衝突した相手が BoxCollider を持っているか確認
 		if (collision.collider is BoxCollider)
 		{
-			// 上方向にジャンプ
-			rb.AddForce(Vector3.up * 5f, ForceMode.Impulse);
-
-			// 進行方向を反転
-			transform.rotation = Quaternion.LookRotation(-transform.forward);
+			// 進行方向を反転（Rigidbody を使って回転）
+			Quaternion newRotation = Quaternion.LookRotation(-transform.forward);
+			rb.MoveRotation(newRotation);
 		}
 	}
 }
