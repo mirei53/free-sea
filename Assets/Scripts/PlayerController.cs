@@ -1,54 +1,49 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Animator))]
 public class PlayerController : MonoBehaviour
 {
-	[SerializeField] private Transform cameraTransform;
-
+	public float moveSpeed = 3f;
+	public float gravity = -9.81f;
+	private Vector3 velocity;
 	private Animator animator;
-	private Vector3 inputDirection;
+	private CharacterController controller;
 
 	void Start()
 	{
+		controller = GetComponent<CharacterController>();
 		animator = GetComponent<Animator>();
-		animator.applyRootMotion = true;
+		Cursor.visible = true;
+		Cursor.lockState = CursorLockMode.None;
 	}
 
 	void Update()
 	{
-		float h = Input.GetAxisRaw("Horizontal");
-		float v = Input.GetAxisRaw("Vertical");
+		if (controller == null || animator == null) return;
 
-		// カメラの向きを基準に移動方向を計算
-		Vector3 camForward = cameraTransform.forward;
-		Vector3 camRight = cameraTransform.right;
-		camForward.y = 0f;
-		camRight.y = 0f;
-		camForward.Normalize();
-		camRight.Normalize();
+		float h = Input.GetAxis("Horizontal");
+		float v = Input.GetAxis("Vertical");
 
-		inputDirection = (camForward * v + camRight * h).normalized;
+		Vector3 move = new Vector3(h, 0, v);
+		move = transform.TransformDirection(move);
 
-		// アニメーション切り替え
-		bool isMoving = inputDirection.magnitude > 0.1f;
-		animator.SetBool("Swimming", isMoving);
-		animator.SetBool("Water", !isMoving);
-
-		// プレイヤーの向きを移動方向に合わせる
-		if (isMoving)
+		if (move.magnitude > 0.1f)
 		{
-			Quaternion targetRotation = Quaternion.LookRotation(inputDirection);
-			transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+			animator.SetBool("Swimming", true);
 		}
-	}
-
-	void OnAnimatorMove()
-	{
-		if (inputDirection.magnitude > 0.1f)
+		else
 		{
-			Vector3 rootMotion = animator.deltaPosition;
-			Vector3 move = inputDirection * rootMotion.magnitude;
-			transform.position += move;
+			animator.SetBool("Swimming", false);
 		}
+
+		// 重力処理
+		if (controller.isGrounded && velocity.y < 0)
+		{
+			velocity.y = -2f; // 地面に張り付けるための小さな値
+		}
+
+		velocity.y += gravity * Time.deltaTime;
+
+		// 移動と重力を合成
+		controller.Move((move * moveSpeed + velocity) * Time.deltaTime);
 	}
 }
