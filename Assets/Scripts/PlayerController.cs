@@ -2,48 +2,31 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-	public float moveSpeed = 3f;
-	public float gravity = -9.81f;
-	private Vector3 velocity;
+	public float moveSpeed = 5f;
+	public float rotationSpeed = 100f;
+
+	private Rigidbody rb;
 	private Animator animator;
-	private CharacterController controller;
 
 	void Start()
 	{
-		controller = GetComponent<CharacterController>();
+		rb = GetComponent<Rigidbody>();
 		animator = GetComponent<Animator>();
-		Cursor.visible = true;
-		Cursor.lockState = CursorLockMode.None;
 	}
 
 	void Update()
 	{
-		if (controller == null || animator == null) return;
+		float moveInput = Input.GetAxisRaw("Vertical");   // W/S
+		float turnInput = Input.GetAxisRaw("Horizontal"); // A/D
 
-		float h = Input.GetAxis("Horizontal");
-		float v = Input.GetAxis("Vertical");
+		// アニメーション切り替え
+		animator.SetBool("isMoving", Mathf.Abs(moveInput) > 0);
 
-		Vector3 move = new Vector3(h, 0, v);
-		move = transform.TransformDirection(move);
+		// A/Dキーで回転（W/Sでは回転しない）
+		transform.Rotate(Vector3.up * turnInput * rotationSpeed * Time.deltaTime);
 
-		if (move.magnitude > 0.1f)
-		{
-			animator.SetBool("Swimming", true);
-		}
-		else
-		{
-			animator.SetBool("Swimming", false);
-		}
-
-		// 重力処理
-		if (controller.isGrounded && velocity.y < 0)
-		{
-			velocity.y = -2f; // 地面に張り付けるための小さな値
-		}
-
-		velocity.y += gravity * Time.deltaTime;
-
-		// 移動と重力を合成
-		controller.Move((move * moveSpeed + velocity) * Time.deltaTime);
+		// 現在の向きに対して前進・後退
+		Vector3 moveDirection = transform.forward * moveInput;
+		rb.MovePosition(rb.position + moveDirection * moveSpeed * Time.deltaTime);
 	}
 }
