@@ -8,11 +8,13 @@ public class PlayerController : MonoBehaviour
 
 	private Rigidbody rb;
 	private Animator animator;
+	private AudioSource moveAudio;
 
 	void Start()
 	{
 		rb = GetComponent<Rigidbody>();
 		animator = GetComponent<Animator>();
+		moveAudio = GetComponent<AudioSource>(); // AudioSource を取得
 	}
 
 	void Update()
@@ -26,8 +28,24 @@ public class PlayerController : MonoBehaviour
 		if (Input.GetKey(KeyCode.LeftShift)) verticalInput = -1f;
 
 		// アニメーション切り替え
-		bool isMoving = Mathf.Abs(moveInput) > 0 || verticalInput != 0;
+		bool isMoving = Mathf.Abs(moveInput) > 0 || verticalInput != 0 || Mathf.Abs(turnInput) > 0;
 		animator.SetBool("isMoving", isMoving);
+
+		// サウンド再生制御
+		if (isMoving)
+		{
+			if (!moveAudio.isPlaying)
+			{
+				moveAudio.Play();
+			}
+		}
+		else
+		{
+			if (moveAudio.isPlaying)
+			{
+				moveAudio.Stop();
+			}
+		}
 
 		// 回転（A/Dキーで左右に回転）
 		transform.Rotate(Vector3.up * turnInput * rotationSpeed * Time.deltaTime);
