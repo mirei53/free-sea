@@ -3,17 +3,14 @@ using System.Collections; // コルーチン（IEnumerator）を使うために必要
 
 public class ReasureChest : MonoBehaviour
 {
-	private Animator animator;
-	private bool isOpen = false;
+	public Animator targetAnimator; // アニメーション対象
+	public string boolParameterName = "IsOpen"; // Animatorのboolパラメータ名
 
-	void Start()
+	private void OnTriggerEnter(Collider other)
 	{
-		animator = GetComponent<Animator>();
-	}
-
-	void OnMouseDown()
-	{
-		isOpen = !isOpen; // 状態を切り替える
-		animator.SetBool("IsOpen", isOpen);
+		if (other.CompareTag("Player"))
+		{
+			targetAnimator.SetBool(boolParameterName, true);
+		}
 	}
 }
