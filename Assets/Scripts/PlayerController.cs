@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
 	{
 		rb = GetComponent<Rigidbody>();
 		animator = GetComponent<Animator>();
-		moveAudio = GetComponent<AudioSource>(); // AudioSource を取得
+		moveAudio = GetComponent<AudioSource>();
 	}
 
 	void Update()
@@ -52,6 +52,12 @@ public class PlayerController : MonoBehaviour
 
 		// 移動（前後 + 上下）
 		Vector3 moveDirection = transform.forward * moveInput + Vector3.up * verticalInput;
-		rb.MovePosition(rb.position + moveDirection * moveSpeed * Time.deltaTime);
+		float moveDistance = moveDirection.magnitude * moveSpeed * Time.deltaTime;
+
+		// Raycastで障害物チェック
+		if (!Physics.Raycast(transform.position, moveDirection.normalized, moveDistance))
+		{
+			rb.MovePosition(rb.position + moveDirection * moveSpeed * Time.deltaTime);
+		}
 	}
 }
