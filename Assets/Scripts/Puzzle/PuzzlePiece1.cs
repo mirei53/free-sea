@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class PuzzlePiece1 : MonoBehaviour
 {
-
 	[SerializeField] private Transform correctPosition;  // 正しい位置
 	[SerializeField] private float snapThreshold = 0.5f; // スナップ距離
 
@@ -37,6 +35,10 @@ public class PuzzlePiece1 : MonoBehaviour
 			{
 				transform.position = correctPosition.position;
 				isSnapped = true;
+
+				// コライダーを無効化して固定
+				Collider col = GetComponent<Collider>();
+				if (col != null) col.enabled = false;
 			}
 		}
 
@@ -56,5 +58,11 @@ public class PuzzlePiece1 : MonoBehaviour
 	public void SetCorrectPosition(Transform target)
 	{
 		correctPosition = target;
+	}
+
+	// 正しく配置されたかどうかを外部から確認するためのメソッド
+	public bool IsSnapped()
+	{
+		return isSnapped;
 	}
 }
