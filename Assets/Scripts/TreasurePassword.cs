@@ -1,57 +1,50 @@
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class TreasurePassword : MonoBehaviour
 {
-	[Header("UI Elements")]
 	public GameObject passwordPanel;
-	public InputField passwordInput;
-	public Text feedbackText;
-	public Button submitButton;
+	public TMP_InputField passwordInput;
+	public string correctPassword = "1621";
 
-	[Header("Password Settings")]
-	public string correctPassword = "secret123";
-	public int maxAttempts = 3;
+	public string clearSceneName = "ClearScene";
+	public string gameOverSceneName = "GameOverScene";
 
-	private int attemptCount = 0;
+	private bool isPanelActive = false;
 
-	void Start()
+	private void Start()
 	{
 		passwordPanel.SetActive(false);
-		submitButton.onClick.AddListener(CheckPassword);
 	}
 
-	void OnTriggerEnter(Collider other)
+	private void Update()
 	{
-		if (other.CompareTag("Player"))
+		if (isPanelActive && Input.GetKeyDown(KeyCode.Return))
 		{
-			ShowPasswordUI();
+			CheckPassword();
 		}
 	}
 
-	void ShowPasswordUI()
+	private void OnTriggerEnter(Collider other)
 	{
-		passwordPanel.SetActive(true);
-		feedbackText.text = "パスワードを入力してください";
-		passwordInput.text = "";
+		if (other.CompareTag("Player"))
+		{
+			passwordPanel.SetActive(true);
+			isPanelActive = true;
+		}
 	}
 
 	public void CheckPassword()
 	{
 		if (passwordInput.text == correctPassword)
 		{
-			SceneManager.LoadScene("GameClearScene");
+			SceneManager.LoadScene(clearSceneName);
 		}
 		else
 		{
-			attemptCount++;
-			feedbackText.text = $"パスワードが違います（{attemptCount}/{maxAttempts}）";
-
-			if (attemptCount >= maxAttempts)
-			{
-				SceneManager.LoadScene("GameOverScene");
-			}
+			SceneManager.LoadScene(gameOverSceneName);
 		}
 	}
+
 }
