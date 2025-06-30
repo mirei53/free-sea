@@ -8872,7 +8872,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &941248506
 RectTransform:
   m_ObjectHideFlags: 0
@@ -24504,6 +24504,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 2126782513}
+    - targetCorrespondingSourceObject: {fileID: 1534066118601383972, guid: 36f0b95c8afb6ca49b8e112cc8fba58d,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2126782514}
   m_SourcePrefab: {fileID: 100100000, guid: 36f0b95c8afb6ca49b8e112cc8fba58d, type: 3}
 --- !u!1 &2126782508 stripped
 GameObject:
@@ -24538,6 +24542,23 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 0.5154964, z: 0.8527284}
   m_Center: {x: -4.215503e-10, y: 0.2870152, z: 0.17330019}
+--- !u!114 &2126782514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2126782508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4948e5dc25b48b341911ac8fb82e9022, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  passwordPanel: {fileID: 941248505}
+  passwordInput: {fileID: 1837376605}
+  correctPassword: 1621
+  clearSceneName: ClearScene
+  gameOverSceneName: GameOverScene
 --- !u!1001 &2132865101
 PrefabInstance:
   m_ObjectHideFlags: 0
